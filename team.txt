@@ -1,1 +1,7 @@
-# TODO: add 5 GitHub IDs, one per line.
+Teammates: 
+
+Daksh Sharma, 
+Deekshith Ponnana, 
+Divyam Anshumaan, 
+Nabanita Bag, 
+Nitesh Kumar Pipralia

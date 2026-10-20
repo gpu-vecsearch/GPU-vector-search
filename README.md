@@ -1,7 +1,3 @@
-Project details:
-
-https://docs.google.com/document/d/1-BrZDdmfVcb8JcHPNC4DDRTW4QGMy-wh9SVkyuhUjDg
-
 # GPU Vector Search
 
 ## Build and run on Euler
@@ -23,11 +19,3 @@ TODO: document the Euler modules, build commands, dataset setup, and benchmark i
 
 TODO: add the benchmark results and final plots.
 
-## Previous README labels
-
-The remote README also contained these labels:
-
-- GPU-vector-search
-- specdec-lab
-- specdec-lab
-- specdec-lab
