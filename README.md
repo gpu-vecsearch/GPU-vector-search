@@ -22,3 +22,12 @@ TODO: document the Euler modules, build commands, dataset setup, and benchmark i
 ## Results
 
 TODO: add the benchmark results and final plots.
+
+## Previous README labels
+
+The remote README also contained these labels:
+
+- GPU-vector-search
+- specdec-lab
+- specdec-lab
+- specdec-lab
