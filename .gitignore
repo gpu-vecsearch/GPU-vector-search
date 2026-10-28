@@ -2,3 +2,6 @@ data/
 build/
 *.out
 *.err
+
+# Ignore generated output directories in all playground experiments
+/zPlayground/Deekshith/**/output/
