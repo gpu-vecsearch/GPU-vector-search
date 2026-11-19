@@ -12,7 +12,7 @@ TODO: document the Euler modules, build commands, dataset setup, and benchmark i
 | v2 | OpenMP CPU | TODO |
 | v3 | Naive CUDA | In Progress |
 | v4 | Tiled CUDA | In Progress |
-| v5 | Fused CUDA | TODO |
+| v5 | Fused CUDA | In Progress |
 | v6 | WMMA CUDA | TODO |
 
 ## Results
