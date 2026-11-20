@@ -1,0 +1,1 @@
+float squared_l2(const float* base, const float* query, int dim);

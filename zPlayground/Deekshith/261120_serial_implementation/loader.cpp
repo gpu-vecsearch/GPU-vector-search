@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <cstdint>
 
 bool load_fvecs(const std::string& file_loc,std::vector<float>& vectors,int n_vectors,int dim)
 {
