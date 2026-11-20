@@ -12,6 +12,7 @@ int main()
     base_vectors.read(reinterpret_cast<char*>(&dim), sizeof(int32_t));
 
     std::cout<<dim<<"\n";
+    std::cout<<sizeof(dim)<<"\n";
 
     return 0;
 
