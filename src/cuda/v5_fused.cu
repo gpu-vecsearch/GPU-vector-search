@@ -21,6 +21,7 @@
 // for just that batch's dense FP32 distance matrix (excluding all inputs).
 
 #include <cuda_runtime.h>
+#include <math_constants.h>  // CUDART_INF_F sentinel used by the top-k lists.
 
 #include <algorithm>
 #include <climits>
