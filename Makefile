@@ -2,9 +2,11 @@
 
 NVCC ?= nvcc
 # Override for a specific GPU, e.g. `make v3 CUDA_ARCH=-arch=sm_80`.
-CUDA_ARCH ?= -gencode arch=compute_70,code=sm_70 \
-             -gencode arch=compute_80,code=sm_80 \
-             -gencode arch=compute_86,code=[sm_86,compute_86]
+# Default covers Ampere (A100 sm_80, RTX 30xx sm_86) and Ada (RTX 4000 Ada sm_89),
+# plus sm_89 PTX for JIT on newer GPUs. Volta (sm_70) is not supported by CUDA 13.
+CUDA_ARCH ?= -gencode arch=compute_80,code=sm_80 \
+             -gencode arch=compute_86,code=sm_86 \
+             -gencode arch=compute_89,code=[sm_89,compute_89]
 NVCCFLAGS ?= -O3 -std=c++17 -lineinfo
 CPPFLAGS := -Iinclude
 
