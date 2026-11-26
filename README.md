@@ -37,6 +37,8 @@ Each version links the same driver (`bench/bench.cpp`) against its own `search()
 
 **Correctness test** for v3 (random data, exact match against CPU brute force): `sbatch slurm/v3_test.sbatch`.
 
+**Roofline profiling** (Nsight Compute): `sbatch slurm/ncu.sbatch` profiles v3 (`--export=ALL,VERSION=v4,BATCH=1000` for others). It writes `results/ncu/<tag>_raw.csv` (commit it) and a `.ncu-rep` report for the Nsight Compute GUI (git-ignored), then runs `python3 scripts/roofline.py`, which turns every raw CSV into `results/roofline.csv`: arithmetic intensity, achieved GFLOP/s and GB/s, and % of the roof per kernel.
+
 Set `CUDA_ARCH` to target one GPU, e.g. `make v3 CUDA_ARCH=-arch=sm_89`.
 
 ## Versions
