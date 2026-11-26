@@ -2,7 +2,40 @@
 
 ## Build and run on Euler
 
-TODO: document the Euler modules, build commands, dataset setup, and benchmark invocation.
+**1. Get SIFT1M** (once, on a login node — compute nodes may not have internet):
+
+```bash
+bash scripts/get_sift1m.sh        # downloads to data/sift/ and checks file sizes
+```
+
+**2. Benchmark a version** (submit from the repo root):
+
+```bash
+mkdir -p results
+sbatch --export=ALL,VERSION=v3 slurm/bench.sbatch
+# options: BATCHES="1 100 10000"  KS="10 100"  REPEAT=5
+```
+
+The job builds `build/bench_v3`, runs it for each batch size and k, and appends one row per run to `results/benchmark.csv`:
+
+```text
+version,batch,k,latency_ms,throughput_qps,recall_at_k
+```
+
+Commit the CSV rows; the Slurm `.out`/`.err` logs are git-ignored.
+
+**Running the driver by hand** (inside a GPU job, e.g. `srun -p instruction --gres=gpu:1 --pty bash`, then `module load nvidia/cuda`):
+
+```bash
+make v3                                   # build/bench_v3 and build/test_v3
+./build/bench_v3 --batch 1000 --k 10      # --repeat 5 --warmup 1 --no-csv --version LABEL
+```
+
+Each version links the same driver (`bench/bench.cpp`) against its own `search()`; `make vN` builds `build/bench_vN`. Latency is the median of `--repeat` timed calls after `--warmup` untimed ones. Because `search()` takes host pointers, GPU timings include copying the database to the device.
+
+**Correctness test** for v3 (random data, exact match against CPU brute force): `sbatch slurm/v3_test.sbatch`.
+
+Set `CUDA_ARCH` to target one GPU, e.g. `make v3 CUDA_ARCH=-arch=sm_89`.
 
 ## Versions
 
