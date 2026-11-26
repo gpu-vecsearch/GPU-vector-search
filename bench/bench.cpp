@@ -171,6 +171,14 @@ int main(int argc, char** argv) {
                     median_ms, times.front(), times.back(), opt.repeat);
         std::printf("  throughput: %.1f queries/s   recall@%zu: %.4f\n", qps, opt.k, recall);
 
+        // Log-only: explain any recall shortfall. Not written to the CSV.
+        const TieAwareRecall tie = tie_aware_recall_at_k(
+            indices.data(), truth.data.data(), base.data.data(), base.count, queries.data.data(),
+            base.dim, opt.batch, opt.k, truth.dim);
+        std::printf("  tie-aware recall@%zu: %.4f  (misses %zu: %zu tied with k-th true distance, "
+                    "%zu farther, %zu invalid/duplicate ids)\n",
+                    opt.k, tie.recall, tie.misses, tie.tied_misses, tie.wrong, tie.invalid);
+
         if (opt.write_csv) {
             char row[256];
             std::snprintf(row, sizeof(row), "%s,%zu,%zu,%.3f,%.1f,%.4f", opt.version.c_str(),

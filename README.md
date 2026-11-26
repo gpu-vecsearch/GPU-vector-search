@@ -31,6 +31,8 @@ make v3                                   # build/bench_v3 and build/test_v3
 ./build/bench_v3 --batch 1000 --k 10      # --repeat 5 --warmup 1 --no-csv --version LABEL
 ```
 
+The log also prints a **tie-aware recall** (not written to the CSV): a returned neighbor counts as correct if it is exactly as close as the k-th ground-truth neighbor. SIFT1M has duplicate vectors, so an exact search can score slightly below 1.0 on plain recall@k purely from ties; the log line says how many misses are ties versus real errors.
+
 Each version links the same driver (`bench/bench.cpp`) against its own `search()`; `make vN` builds `build/bench_vN`. Latency is the median of `--repeat` timed calls after `--warmup` untimed ones. Because `search()` takes host pointers, GPU timings include copying the database to the device.
 
 **Correctness test** for v3 (random data, exact match against CPU brute force): `sbatch slurm/v3_test.sbatch`.
