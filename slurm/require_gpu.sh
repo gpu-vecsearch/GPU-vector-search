@@ -4,8 +4,8 @@
 # All of Euler's instruction GPU nodes advertise the same gres (gpu:rtx4000ada),
 # but some GPUs are RTX 4000 *SFF* Ada (lower bandwidth and clocks), so --gres
 # alone cannot pin the model. Results from different models are not comparable.
-# Known: euler01 has SFF cards (job 132160), so our job scripts --exclude it;
-# this check still guards against any other node.
+# Known: euler01 and euler04 have SFF cards (jobs 132160, 132337), so our job
+# scripts --exclude them; this check still guards against any other node.
 #
 # Override with REQUIRE_GPU="<exact nvidia-smi name>", or REQUIRE_GPU=any to skip.
 
