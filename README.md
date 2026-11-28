@@ -47,7 +47,7 @@ Set `CUDA_ARCH` to target one GPU, e.g. `make v3 CUDA_ARCH=-arch=sm_89`.
 | --- | --- | --- |
 | v1 | Serial CPU | TODO |
 | v2 | OpenMP CPU | TODO |
-| v3 | Naive CUDA | In Progress |
+| v3 | Naive CUDA | Done |
 | v4 | Tiled CUDA | In Progress |
 | v5 | Fused CUDA | In Progress |
 | v6 | WMMA CUDA | TODO |
