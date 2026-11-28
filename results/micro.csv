@@ -1,0 +1,4 @@
+device,test,value,unit
+NVIDIA RTX 4000 SFF Ada Generation,dram_read,266.1,GB/s
+NVIDIA RTX 4000 SFF Ada Generation,dram_copy,246.1,GB/s
+NVIDIA RTX 4000 SFF Ada Generation,fp32_fma,23194.3,GFLOP/s
