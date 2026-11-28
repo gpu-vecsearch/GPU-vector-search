@@ -28,6 +28,7 @@ KS="${KS:-10}"
 REPEAT="${REPEAT:-5}"
 
 module load nvidia/cuda   # pin a version if the default changes
+source slurm/require_gpu.sh   # stop if this is not the RTX 4000 Ada our results use
 
 echo "job $SLURM_JOB_ID on $(hostname)"
 nvidia-smi --query-gpu=name,compute_cap,memory.total --format=csv || true

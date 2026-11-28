@@ -36,6 +36,7 @@ K="${K:-10}"
 LAUNCHES="${LAUNCHES:-20}"   # max kernel launches to profile
 
 module load nvidia/cuda   # ncu ships with the CUDA toolkit
+source slurm/require_gpu.sh   # stop if this is not the RTX 4000 Ada our results use
 
 echo "job $SLURM_JOB_ID on $(hostname)"
 nvidia-smi --query-gpu=name,compute_cap,memory.total --format=csv || true
