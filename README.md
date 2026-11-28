@@ -39,6 +39,8 @@ Each version links the same driver (`bench/bench.cpp`) against its own `search()
 
 **Roofline profiling** (Nsight Compute): `sbatch slurm/ncu.sbatch` profiles v3 (`--export=ALL,VERSION=v4,BATCH=1000` for others). It writes `results/ncu/<tag>_raw.csv` (commit it) and a `.ncu-rep` report for the Nsight Compute GUI (git-ignored), then runs `python3 scripts/roofline.py`, which turns every raw CSV into `results/roofline.csv`: arithmetic intensity, achieved GFLOP/s and GB/s, and % of the roof per kernel.
 
+**Baselines and ceilings** (FAISS GPU, cuBLAS GEMM, bandwidth/FMA microbenchmarks): `bash scripts/setup_faiss.sh` once on a login node, then `sbatch slurm/baselines.sbatch`. See [baselines/README.md](baselines/README.md) for what each measures and how to compare fairly.
+
 Set `CUDA_ARCH` to target one GPU, e.g. `make v3 CUDA_ARCH=-arch=sm_89`.
 
 ## Versions

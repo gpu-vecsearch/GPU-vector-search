@@ -1,4 +1,4 @@
-.PHONY: v1 v2 v3 v4 v5 v6 clean test-v3 data
+.PHONY: v1 v2 v3 v4 v5 v6 clean test-v3 data micro cublas
 
 # ---------------------------------------------------------------------------
 # Toolchain
@@ -69,6 +69,20 @@ $(BUILD)/test_v3: tests/test_search.cpp src/cuda/v3_naive.cu $(TOPK_SRC) $(CUDA_
 
 test-v3: $(BUILD)/test_v3
 	./$(BUILD)/test_v3
+
+# --- Reference measurements (not versions) ---------------------------------
+# Roofline ceilings you can actually reach, and the cuBLAS GEMM baseline.
+micro: $(BUILD)/bandwidth $(BUILD)/fma
+cublas: $(BUILD)/cublas_gemm
+
+$(BUILD)/bandwidth: micro/bandwidth.cu include/csv_append.h include/cuda_check.cuh | $(BUILD)
+	$(NVCC) $(NVCCFLAGS) $(CUDA_ARCH) $(CPPFLAGS) -o $@ micro/bandwidth.cu
+
+$(BUILD)/fma: micro/fma.cu include/csv_append.h include/cuda_check.cuh | $(BUILD)
+	$(NVCC) $(NVCCFLAGS) $(CUDA_ARCH) $(CPPFLAGS) -o $@ micro/fma.cu
+
+$(BUILD)/cublas_gemm: baselines/cublas_gemm.cu include/csv_append.h include/cuda_check.cuh | $(BUILD)
+	$(NVCC) $(NVCCFLAGS) $(CUDA_ARCH) $(CPPFLAGS) -o $@ baselines/cublas_gemm.cu -lcublas
 
 # --- Data ------------------------------------------------------------------
 data:
