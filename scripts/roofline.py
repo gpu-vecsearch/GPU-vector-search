@@ -45,7 +45,7 @@ SHORT_UNITS = {"ns": 1e-9, "us": 1e-6, "ms": 1e-3, "s": 1.0,
 OUT_FIELDS = ["version", "profile", "kernel", "launches", "time_ms", "gflop", "dram_gb",
               "ai_flop_per_byte", "achieved_gflops", "achieved_dram_gbs",
               "peak_gflops", "peak_dram_gbs", "ridge_ai", "bound", "pct_of_roof",
-              "l2_gb", "ai_l2", "sm_pct_of_peak", "dram_pct_of_peak"]
+              "l2_gb", "ai_l2", "sm_pct_of_peak", "dram_pct_of_peak", "device"]
 
 
 def unit_scale(unit):
@@ -104,6 +104,8 @@ def read_ncu_raw(path):
         if len(row) != len(header):
             continue
         rec = {"kernel": short_kernel_name(row[header.index("Kernel Name")])}
+        if "device__attribute_display_name" in header:
+            rec["device"] = row[header.index("device__attribute_display_name")].strip()
         for col, unit, value in zip(header, units, row):
             num = parse_number(value)
             if num is not None and "__" in col:
@@ -122,7 +124,7 @@ def summarize(path):
     for rec in read_ncu_raw(path):
         k = rec["kernel"]
         if k not in kernels:
-            kernels[k] = {"launches": 0, "peaks": rec, "pct": []}
+            kernels[k] = {"launches": 0, "peaks": rec, "pct": [], "device": rec.get("device", "")}
             for m in SUMMED:
                 kernels[k][m] = 0.0
             order.append(k)
@@ -167,6 +169,7 @@ def summarize(path):
             "ai_l2": flops / agg[L2] if agg[L2] else float("inf"),
             "sm_pct_of_peak": sum(sm_pct) / len(sm_pct) if sm_pct else float("nan"),
             "dram_pct_of_peak": sum(dram_pct) / len(dram_pct) if dram_pct else float("nan"),
+            "device": agg["device"],
         })
     return out
 

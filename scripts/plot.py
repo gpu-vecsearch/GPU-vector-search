@@ -152,11 +152,18 @@ def line_with_markers(ax, xs, ys, color, label):
     return h
 
 
-def end_labels(ax, series):
-    """Direct labels at line ends (only used for <= 4 series), in text ink."""
+def end_labels(fig, ax, series, min_gap_pt=13):
+    """Direct labels at line ends (only for <= 4 series), in text ink. If any two ends
+    are closer than a label's height, skip them all: the legend carries identity, and
+    nudged labels would detach from their lines."""
+    ends = sorted(ax.transData.transform((xs[-1], ys[-1]))[1] for xs, ys, _ in series)
+    min_gap = min_gap_pt * fig.dpi / 72.0
+    if any(b - a < min_gap for a, b in zip(ends, ends[1:])):
+        return False
     for xs, ys, text in series:
         ax.annotate(text, (xs[-1], ys[-1]), xytext=(8, 0), textcoords="offset points",
                     va="center", ha="left", fontsize=9.5, color=INK)
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -202,8 +209,10 @@ def plot_throughput(rows, k, out):
     if len(handles) >= 2:
         legend(ax, handles, outside=len(handles) > 4)
     if len(handles) <= 4:
-        end_labels(ax, ends)
+        right = ax.get_xlim()[1]
         ax.set_xlim(right=max(max(xs) for xs, _, _ in ends) * 4)
+        if not end_labels(fig, ax, ends):
+            ax.set_xlim(right=right)
     save(fig, os.path.join(out, "throughput.png"))
 
 
@@ -271,14 +280,23 @@ def plot_roofline(rows, micro, out):
     fig.subplots_adjust(top=0.85)
     style(fig, ax, "Roofline: where each kernel sits",
           "Achieved FP32 GFLOP/s vs. arithmetic intensity (DRAM). Roof and points from the same "
-          "Nsight Compute run, at profiling clocks.")
+          "Nsight Compute run, at profiling clocks%s." % (", " + pts[0]["device"].replace("NVIDIA ", "")
+                                                          if pts[0].get("device") else ""))
     ax.plot(xs, [min(peak, x * bw) for x in xs], color=INK_2, linewidth=1.5, zorder=2)
     ridge = peak / bw
 
-    # Measured ceilings (boost clocks) from the microbenchmarks, if available.
+    # Measured ceilings (boost clocks) from the microbenchmarks, only if they were
+    # measured on the same GPU model as the profile (Euler mixes GPU models).
+    device = pts[0].get("device", "")
     latest = {}
     for r in micro:
+        if device and r.get("device", "") != device:
+            continue
         latest[r["test"]] = float(r["value"])
+    other = sorted({r.get("device", "") for r in micro} - {device}) if device else []
+    if micro and not latest:
+        print("roofline: measured ceilings not drawn: micro.csv is from %s, the profile from %s"
+              % (", ".join(other) or "an unknown GPU", device or "an unknown GPU"))
     m_bw = max([latest[t] for t in ("dram_read", "dram_copy") if t in latest] or [0])
     m_fl = latest.get("fp32_fma", 0)
     if m_bw and m_fl:
@@ -383,12 +401,15 @@ def plot_gemm(rows, out):
     ax.set_xscale("log")
     ax.set_yscale("log")
     log_axis(ax.xaxis)
-    log_axis(ax.yaxis)
+    ally = [y for _, ys, _ in ends for y in ys]
+    log_axis(ax.yaxis, min(ally), max(ally))
     label_axes(ax, "Queries per batch (B)", "GFLOP/s")
     if len(handles) >= 2:
         legend(ax, handles)
-    end_labels(ax, ends)
+    right = ax.get_xlim()[1]
     ax.set_xlim(right=max(max(xs) for xs, _, _ in ends) * 4)
+    if not end_labels(fig, ax, ends):
+        ax.set_xlim(right=right)
     save(fig, os.path.join(out, "gemm.png"))
 
 
