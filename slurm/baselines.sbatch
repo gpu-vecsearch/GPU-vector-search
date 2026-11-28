@@ -2,6 +2,7 @@
 #SBATCH --job-name=baselines
 #SBATCH --partition=instruction
 #SBATCH --gres=gpu:1
+#SBATCH --exclude=euler01   # euler01 has RTX 4000 SFF Ada GPUs; see slurm/require_gpu.sh
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
