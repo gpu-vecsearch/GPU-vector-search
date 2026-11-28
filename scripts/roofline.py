@@ -39,6 +39,8 @@ SUMMED = [TIME, DRAM_R, DRAM_W, L2, FFMA, FADD, FMUL]
 PREFIX = {"": 1.0, "K": 1e3, "M": 1e6, "G": 1e9, "T": 1e12,
           "m": 1e-3, "u": 1e-6, "n": 1e-9}
 BASE_UNITS = ("byte", "second", "cycle", "inst", "Hz", "sector", "warp", "thread")
+SHORT_UNITS = {"ns": 1e-9, "us": 1e-6, "ms": 1e-3, "s": 1.0,
+               "hz": 1.0, "khz": 1e3, "mhz": 1e6, "ghz": 1e9}
 
 OUT_FIELDS = ["version", "profile", "kernel", "launches", "time_ms", "gflop", "dram_gb",
               "ai_flop_per_byte", "achieved_gflops", "achieved_dram_gbs",
@@ -54,6 +56,11 @@ def unit_scale(unit):
     if "/" in unit:
         num, den = unit.split("/", 1)
         return unit_scale(num) / unit_scale(den)
+    # Newer ncu prints short units ("ns", "hz", "GB"); older ones spell them out.
+    if unit.lower() in SHORT_UNITS:
+        return SHORT_UNITS[unit.lower()]
+    if unit in ("B", "KB", "MB", "GB", "TB"):
+        return PREFIX[unit[:-1]]
     for base in BASE_UNITS:
         if unit.endswith(base):
             prefix = unit[: -len(base)]
@@ -73,7 +80,7 @@ def parse_number(text):
 
 
 def short_kernel_name(name):
-    name = name.replace("(anonymous namespace)::", "")
+    name = name.replace("(anonymous namespace)::", "").replace("<unnamed>::", "")
     name = re.sub(r"\(.*\)\s*$", "", name)  # drop the parameter list
     name = re.sub(r"^void\s+", "", name)       # template kernels carry a return type
     return name.strip()
