@@ -1,6 +1,7 @@
 """Plot benchmark, roofline, scaling and baseline results.
 
-Figures (PNG, written to results/plots/; a figure whose input is missing is skipped):
+Figures (PNG, written to results/plots/; a figure whose input is missing is skipped,
+and any old copy of it is deleted so stale plots never outlive their data):
 
   throughput.png  queries/s vs query batch size for every version and FAISS
                   (results/benchmark.csv, rows with the chosen k)
@@ -413,6 +414,9 @@ def plot_gemm(rows, out):
     save(fig, os.path.join(out, "gemm.png"))
 
 
+FIGURES = ("throughput.png", "roofline.png", "scaling.png", "gemm.png")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--results", default="results")
@@ -422,6 +426,10 @@ def main():
     args = ap.parse_args()
     out = args.out or os.path.join(args.results, "plots")
     os.makedirs(out, exist_ok=True)
+    for name in FIGURES:  # remove old figures; a skipped one must not linger from earlier data
+        path = os.path.join(out, name)
+        if os.path.exists(path):
+            os.remove(path)
 
     plt.rcParams.update({"font.family": "sans-serif", "font.size": 10})
 
