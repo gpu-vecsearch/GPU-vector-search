@@ -41,6 +41,8 @@ Each version links the same driver (`bench/bench.cpp`) against its own `search()
 
 **Baselines and ceilings** (FAISS GPU, cuBLAS GEMM, bandwidth/FMA microbenchmarks): `bash scripts/setup_faiss.sh` once on a login node, then `sbatch slurm/baselines.sbatch`. See [baselines/README.md](baselines/README.md) for what each measures and how to compare fairly.
 
+**Plots:** `python3 scripts/plot.py` (with matplotlib, e.g. `$HOME/.venvs/vecsearch-faiss/bin/python scripts/plot.py` after `setup_faiss.sh`) writes `results/plots/`: throughput vs batch for every version and FAISS, the roofline, v2 thread scaling, and cuBLAS GEMM. Figures with no data yet are skipped. For v2 scaling, record each thread count as its own label: `OMP_NUM_THREADS=8 ./build/bench_v2 --version v2-t8`.
+
 Set `CUDA_ARCH` to target one GPU, e.g. `make v3 CUDA_ARCH=-arch=sm_89`.
 
 ## Versions

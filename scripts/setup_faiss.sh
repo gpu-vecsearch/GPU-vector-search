@@ -1,5 +1,6 @@
 #!/bin/bash
-# One-time setup for the FAISS baseline: a Python virtualenv with faiss-gpu.
+# One-time setup for the FAISS baseline and plots: a Python virtualenv with
+# faiss-gpu, numpy and matplotlib.
 # Run on an Euler LOGIN node (needs internet):  bash scripts/setup_faiss.sh
 #
 # Uses the faiss-gpu-cu12 wheel, which bundles its own CUDA 12 runtime via pip;
@@ -22,7 +23,7 @@ if [[ ! -x "$VENV/bin/python" ]]; then
     "$PY" -m venv "$VENV"
 fi
 "$VENV/bin/pip" install --quiet --upgrade pip
-"$VENV/bin/pip" install --quiet "faiss-gpu-cu12" numpy
-"$VENV/bin/python" -c "import faiss, numpy; print('faiss', faiss.__version__, '| numpy', numpy.__version__)"
+"$VENV/bin/pip" install --quiet "faiss-gpu-cu12" numpy matplotlib   # matplotlib: scripts/plot.py
+"$VENV/bin/python" -c "import faiss, numpy, matplotlib; print('faiss', faiss.__version__, '| numpy', numpy.__version__, '| matplotlib', matplotlib.__version__)"
 echo "FAISS environment ready: $VENV"
 echo "(No GPU is visible on the login node; slurm/baselines.sbatch runs it on a GPU node.)"
